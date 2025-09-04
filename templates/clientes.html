@@ -1,57 +1,89 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <title>Cadastro de Clientes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 24px; }
-    h1 { margin-bottom: 12px; }
-    form { display: grid; gap: 8px; max-width: 520px; margin-bottom: 24px; }
-    input[type="text"], input[type="email"], input[type="tel"] { padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-    button { padding: 8px 14px; border: 0; background: #0d6efd; color: #fff; border-radius: 6px; cursor: pointer; }
-    table { border-collapse: collapse; width: 100%; max-width: 900px; }
-    th, td { border-bottom: 1px solid #eee; padding: 8px 6px; text-align: left; }
-    .danger { background: #dc3545; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    @media (max-width: 640px){ .row { grid-template-columns: 1fr; } }
-  </style>
+    <meta charset="UTF-8">
+    <title>Cadastro de Clientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input {
+            margin: 5px;
+            padding: 8px;
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button.danger {
+            background-color: red;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-  <h1>Cadastro de Clientes</h1>
+    <h1>Cadastro de Clientes</h1>
 
-  <form method="post" action="/clientes">
-    <div class="row">
-      <input name="nome" type="text" placeholder="Nome *" required />
-      <input name="email" type="email" placeholder="E-mail" />
-    </div>
-    <div class="row">
-      <input name="telefone" type="tel" placeholder="Telefone" />
-      <button type="submit">Salvar</button>
-    </div>
-  </form>
+    <!-- Formulário de cadastro -->
+    <form action="{{ url_for('clientes') }}" method="post">
+        <input type="text" name="nome" placeholder="Nome *" required>
+        <input type="email" name="email" placeholder="E-mail">
+        <input type="text" name="telefone" placeholder="Telefone">
+        <button type="submit">Salvar</button>
+    </form>
 
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr>
-    </thead>
-    <tbody>
-      {% for c in clientes %}
-      <tr>
-        <td>{{ c.id }}</td>
-        <td>{{ c.nome }}</td>
-        <td>{{ c.email or "—" }}</td>
-        <td>{{ c.telefone or "—" }}</td>
-        <td>
-          <form method="post" action="/clientes/{{ c.id }}/excluir" onsubmit="return confirm('Excluir {{ c.nome }}?');">
-            <button class="danger">Excluir</button>
-          </form>
-        </td>
-      </tr>
-      {% else %}
-      <tr><td colspan="5">Nenhum cliente cadastrado.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <!-- Lista de clientes -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in clientes %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.nome }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.telefone }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('excluir_cliente', cliente_id=c.id) }}"
+                          onsubmit="return confirm('Excluir {{ c.nome }}?');">
+                        <button class="danger">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5">Nenhum cliente cadastrado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
