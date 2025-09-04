@@ -5,11 +5,9 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # --- Config do banco ---
-# Pega a URL do banco do Render (DATABASE_URL) e cai para SQLite local se não existir.
 db_url = os.getenv("DATABASE_URL", "sqlite:///clientes.db")
 
-# Render costuma fornecer "postgres://" — o SQLAlchemy moderno precisa do driver explícito.
-# Forçamos o driver do psycopg (v3): "postgresql+psycopg://"
+# Força o driver do psycopg (v3) para Postgres do Render
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
 elif db_url.startswith("postgresql://"):
@@ -28,7 +26,7 @@ class Cliente(db.Model):
     email = db.Column(db.String(120))
     telefone = db.Column(db.String(50))
 
-# Cria as tabelas na primeira execução
+# Cria as tabelas
 with app.app_context():
     db.create_all()
 
@@ -50,7 +48,6 @@ def clientes():
             db.session.commit()
         return redirect(url_for("clientes"))
 
-    # GET
     lista = Cliente.query.order_by(Cliente.id.desc()).all()
     return render_template("clientes.html", clientes=lista)
 
@@ -62,5 +59,4 @@ def excluir_cliente(cliente_id):
     return redirect(url_for("clientes"))
 
 if __name__ == "__main__":
-    # Para rodar localmente: python app.py
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
