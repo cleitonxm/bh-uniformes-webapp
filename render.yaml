@@ -17,4 +17,5 @@ services:
           property: connectionString
 databases:
   - name: bh-uniformes-db
-    plan: starter
+    plan: free
+
