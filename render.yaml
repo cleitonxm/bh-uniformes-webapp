@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: bh-uniformes-webapp
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: starter
+    region: oregon
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bh-uniformes-db
+          property: connectionString
+databases:
+  - name: bh-uniformes-db
+    plan: starter
