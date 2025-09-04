@@ -4,10 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# --- Config do banco ---
+# --- URL do banco (Render define DATABASE_URL) ---
 db_url = os.getenv("DATABASE_URL", "sqlite:///clientes.db")
 
-# Força o driver do psycopg (v3) para Postgres do Render
+# Força driver psycopg v3 na URL do Postgres
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
 elif db_url.startswith("postgresql://"):
