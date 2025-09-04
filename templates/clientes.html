@@ -1,89 +1,81 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastro de Clientes</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        input {
-            margin: 5px;
-            padding: 8px;
-        }
-        button {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button.danger {
-            background-color: red;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Clientes</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 28px; }
+    h1 { margin-bottom: 18px; }
+    form { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+    input[type="text"], input[type="email"] { padding: 10px; min-width: 220px; }
+    button { padding: 10px 16px; background: #1976d2; color: #fff; border: 0; cursor: pointer; }
+    button:hover { background: #155fa8; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #f5f5f5; }
+    .btn-danger { background: #e53935; }
+    .btn-danger:hover { background: #c62828; }
+
+    /* Alertas */
+    .alerts { margin-bottom: 12px; }
+    .alert { padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; }
+    .alert.error { background: #fdecea; color: #b71c1c; border: 1px solid #f5c6cb; }
+    .alert.success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
+  </style>
 </head>
 <body>
-    <h1>Cadastro de Clientes</h1>
+  <h1>Cadastro de Clientes</h1>
 
-    <!-- Formulário de cadastro -->
-    <form action="{{ url_for('clientes') }}" method="post">
-        <input type="text" name="nome" placeholder="Nome *" required>
-        <input type="email" name="email" placeholder="E-mail">
-        <input type="text" name="telefone" placeholder="Telefone">
-        <button type="submit">Salvar</button>
-    </form>
+  <!-- Mensagens -->
+  <div class="alerts">
+    {% with msgs = get_flashed_messages(with_categories=True) %}
+      {% if msgs %}
+        {% for cat, msg in msgs %}
+          <div class="alert {{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
 
-    <!-- Lista de clientes -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Telefone</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in clientes %}
-            <tr>
-                <td>{{ c.id }}</td>
-                <td>{{ c.nome }}</td>
-                <td>{{ c.email }}</td>
-                <td>{{ c.telefone }}</td>
-                <td>
-                    <form method="post" action="{{ url_for('excluir_cliente', cliente_id=c.id) }}"
-                          onsubmit="return confirm('Excluir {{ c.nome }}?');">
-                        <button class="danger">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="5">Nenhum cliente cadastrado.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <!-- Formulário -->
+  <form method="post" action="{{ url_for('clientes') }}">
+    <input type="text" name="nome" placeholder="Nome *"
+           value="{{ (form.nome if form else '') | default('') }}" required />
+    <input type="email" name="email" placeholder="E-mail"
+           value="{{ (form.email if form else '') | default('') }}" />
+    <input type="text" name="telefone" placeholder="Telefone"
+           value="{{ (form.telefone if form else '') | default('') }}" />
+    <button type="submit">Salvar</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Telefone</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in clientes %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.nome }}</td>
+          <td>{{ c.email or '' }}</td>
+          <td>{{ c.telefone or '' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('excluir_cliente', cliente_id=c.id) }}" onsubmit="return confirm('Excluir este cliente?')">
+              <button type="submit" class="btn-danger">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5">Nenhum cliente cadastrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </body>
 </html>
